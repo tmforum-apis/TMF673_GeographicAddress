@@ -1,0 +1,1971 @@
+
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "## TMF API Reference : TMF 673 - Geographic Address Management\n### Release : 17.5 - January 2018\n\nThe Geographic Address API provides a standardized client interface to an Address management system.\nIt allows looking for worldwide addresses.\nIt can also be used to validate geographic address data, to be sure that it corresponds to a real address.\nFinally, it can be used to look for an address by: searching an area as a start (city, town …), then zooming on the streets of this area, and finally listing all the street segments (numbers) in a street.\n\n### Resources\n- GeographicAddress\n- GeographicAddressValidation\n- Area\n- Street\n- StretSegment\n- Hub\n\n### Operations\nGeographic Address Management API performs the following operations :\n- Retrieve a geographic address or a collection of geographic addresses\n- Retrieve a geographic sub-address\n- Create a geographic address validation\n- Retrieve, update and delete an existing  geographic address validation\n- List areas\n- List streets\n- List street segments\n- Notify events on these resources",
+    "version": "1.0.0",
+    "title": "API GeographicAddress"
+  },
+  "host": "serverRoot",
+  "basePath":	"/tmf-api/geographicAddressManagement/v1/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json;charset=utf-8"
+  ],
+  "produces": [
+    "application/json;charset=utf-8"
+  ],
+  "tags": [
+  
+    {
+      "name": "GeographicAddress",
+      "description": ""
+    },
+    {
+      "name": "GeographicAddressValidation",
+      "description": ""
+    },
+    {
+      "name": "GeographicSubAddress",
+      "description": ""
+    },
+    {
+      "name": "Area",
+      "description": ""
+    },
+    {
+      "name": "Street",
+      "description": ""
+    },
+    {
+      "name": "StreetSegment",
+      "description": ""
+    },
+    {
+      "name": "Hub",
+      "description": ""
+    }
+  ],
+  "paths": {
+      "/geographicAddress": {
+      "get": {
+        "tags": [
+           "GeographicAddress"
+        ],        
+        "operationId": "geographicAddressFind",
+        "summary": "List geographic addresses",
+        "description": "This operation is used to retrieve geographic addresses corresponding to search criteria.\nFiltering is allowed on all attributes. See example below.\nAttribute selection is possible for all attributes. Providing filtering criteria is mandatory to avoid too many answers retrieved.\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "fields",
+            "required": false,
+            "in": "query",
+            "description": "Attribute selection",
+            
+              "type": "string"
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Requested index for start of resources to be provided in response requested by client",
+            
+              "type": "string"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Requested number of resources to be provided in response requested by client",
+            
+              "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+              "$ref": "#/definitions/GeographicAddress"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "description": "Total number of items matching criteria",
+              "type": "integer",
+              "format": "int32"
+              },
+              "X-Result-Count": {
+                "description": "Actual number of items returned in the re body",
+              "type": "integer",
+              "format": "int32"
+              }
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      }
+    },
+      "/geographicAddress/{geographicAddressId}": {
+      "get": {
+        "tags": [
+           "GeographicAddress"
+        ],        
+        "operationId": "geographicAddressGet",
+        "summary": "Retrieve a geographic address",
+        "description": "Retrieves a geographic address using its unique ID. This ID should be retrieve either using the address completion process (cf. completion), or in another API of the ecosystem (party, appointment, etc.)\nAttribute selection is enabled for all first level attributes. Filtering on sub-resources may be available depending on the compliance level supported by an implementation\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "geographicAddressId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Unique identifier of the geographic address"
+          },
+          {
+            "name": "fields",
+            "required": false,
+            "in": "query",
+            "description": "Attribute selection",
+            
+              "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/GeographicAddress"
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      }
+    },
+      "/geographicAddressValidation": {
+      "post": {
+        "tags": [
+           "GeographicAddressValidation"
+        ],        
+        "operationId": "geographicAddressValidationCreate",
+        "summary": "Create a geographic address validation request",
+        "description": "This operation creates a geographic address validation request.\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "addressValidationRequest",
+            "required": true,
+            "in": "body",
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GeographicAddressValidationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/GeographicAddressValidation"
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+           "GeographicAddressValidation"
+        ],        
+        "operationId": "geographicAddressValidationFind",
+        "summary": "List geographic address validation requests",
+        "description": "This operation retrieves geographic address validation entities.\nAttribute selection is enabled for all first level attributes. Filtering on sub-resources may be available depending on the compliance level supported by an implementation.\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "fields",
+            "required": false,
+            "in": "query",
+            "description": "Attribute selection",
+            
+              "type": "string"
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Requested index for start of resources to be provided in response requested by client",
+            
+              "type": "string"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Requested number of resources to be provided in response requested by client",
+            
+              "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+              "$ref": "#/definitions/GeographicAddressValidation"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "description": "Total number of items matching criteria",
+              "type": "integer",
+              "format": "int32"
+              },
+              "X-Result-Count": {
+                "description": "Actual of items returned in the response body",
+              "type": "integer",
+              "format": "int32"
+              }
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      }
+    },
+      "/geographicAddressValidation/{geographicAddressValidationId}": {
+      "get": {
+        "tags": [
+           "GeographicAddressValidation"
+        ],        
+        "operationId": "geographicAddressValidationGet",
+        "summary": "Retrieve a geographic address validation request",
+        "description": "This operation allows to retrieve an existing geographic address validation entity  using its Id.\nAttribute selection is enabled for all first level attributes.\nFiltering on sub-resources may be available depending on the compliance level supported by an implementation.\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "geographicAddressValidationId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Unique identifier of the geographic address validation"
+          },
+          {
+            "name": "fields",
+            "required": false,
+            "in": "query",
+            "description": "Attribute selection",
+            
+              "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/GeographicAddressValidation"
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+           "GeographicAddressValidation"
+        ],        
+        "operationId": "geographicAddressValidationPatch",
+        "summary": "Update partially a geographic address validation request",
+        "description": "This operation allows partial updates of an address validation entity.\nNote: this operation is available only to ADMIN API users.\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "geographicAddressValidationId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Unique identifier of the geographic address validation"
+          },
+          {
+            "name": "AddressValidation",
+            "required": true,
+            "in": "body",
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GeographicAddressValidation"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/GeographicAddressValidation"
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+           "GeographicAddressValidation"
+        ],        
+        "operationId": "geographicAddressValidationDelete",
+        "summary": "Delete a geographic address validation request",
+        "description": "This operation allows to delete an existing address validation request.\nNote: this operation is available only to ADMIN API users\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "geographicAddressValidationId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Unique identifier of the geographic address validation"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      }
+    },
+      "/geographicAddress/{geographicAddressId}/geographicSubAddress": {
+      "get": {
+        "tags": [
+           "GeographicSubAddress"
+        ],        
+        "operationId": "geographicSubAddressFind",
+        "summary": "List subaddresses of a geographic address",
+        "description": "This operation can be used to retrieve sub-addresses of a geographic address.\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "geographicAddressId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Unique identifier of the geographic address"
+          }
+  ,
+          {
+            "name": "fields",
+            "required": false,
+            "in": "query",
+            "description": "Attribute selection",
+            
+              "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+              "$ref": "#/definitions/GeographicSubAddress"
+              }
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      }
+    },
+      "/geographicAddress/{geographicAddressId}/geographicSubAddress/{geographicSubAddressId}": {
+      "get": {
+        "tags": [
+           "GeographicSubAddress"
+        ],        
+        "operationId": "geographicSubAddressGet",
+        "summary": "Retrieve a sub-address of a geographic address",
+        "description": "This operation can be used to retrieve a sub-address of a geographic address\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "geographicAddressId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Unique identifier of the geographic address"
+          }
+  ,
+          {
+            "name": "geographicSubAddressId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Unique identifier of the sub-address"
+          },
+          {
+            "name": "fields",
+            "required": false,
+            "in": "query",
+            "description": "Attribute selection",
+            
+              "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/GeographicSubAddress"
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      }
+    },
+      "/area": {
+      "get": {
+        "tags": [
+           "Area"
+        ],        
+        "operationId": "areaFind",
+        "summary": "List areas",
+        "description": "This operation is the first step of an address completion process, allowing to retrieve geographic areas Step 1: I look for a geographic area (city, locality, district, etc.) using its name.\nFiltering is allowed on all attributes. \n Attribute selection is possible for all attributes.\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "fields",
+            "required": false,
+            "in": "header",
+            "description": "Attribute selection",
+            
+              "type": "string"
+          },
+          {
+            "name": "fuzzy",
+            "required": false,
+            "in": "header",
+            "description": "Can be used for approximate searches (sounds like, etc.)",
+            
+              "type": "string"
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "header",
+            "description": "Name of the area",
+            
+              "type": "string"
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "header",
+            "description": "Area type",
+            
+              "type": "string"
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Requested index for start of resources to be provided in response requested by client",
+            
+              "type": "integer",
+              "format": "int32"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Requested number of resources to be provided in response requested by client",
+            
+              "type": "integer",
+              "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+              "$ref": "#/definitions/Area"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "description": "Total number of items matching criteria",
+              "type": "integer",
+              "format": "int32"
+              },
+              "X-Result-Count": {
+                "description": "Actual number of items returned in the response body",
+              "type": "integer",
+              "format": "int32"
+              }
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      }
+    },
+      "/street": {
+      "get": {
+        "tags": [
+           "Street"
+        ],        
+        "operationId": "streetFind",
+        "summary": "List streets",
+        "description": "This operation is the second step of an address completion process, allowing to retrieve streets Step 2: I look for the streets inside this geographic area.\nFiltering is allowed on all attributes.\nAttribute selection is possible for all attributes.\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "area.id",
+            "required": false,
+            "in": "header",
+            "description": "Unique identifier of the area",
+            
+              "type": "string"
+          },
+          {
+            "name": "fuzzy",
+            "required": false,
+            "in": "header",
+            "description": "Can be used for approximate searches (sounds like, etc.)",
+            
+              "type": "string"
+          },
+          {
+            "name": "fields",
+            "required": false,
+            "in": "header",
+            "description": "Attribute selection",
+            
+              "type": "string"
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Requested index for start of resources to be provided in response requested by client",
+            
+              "type": "integer",
+              "format": "int32"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Requested number of resources to be provided in response requested by client",
+            
+              "type": "integer",
+              "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+              "$ref": "#/definitions/Street"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "description": "Total number of items matching criteria",
+              "type": "integer",
+              "format": "int32"
+              },
+              "X-Result-Count": {
+                "description": "Actual number of items returned in the response body",
+              "type": "integer",
+              "format": "int32"
+              }
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      }
+    },
+      "/streetSegment": {
+      "get": {
+        "tags": [
+           "StreetSegment"
+        ],        
+        "operationId": "streetSegmentFind",
+        "summary": "List street segments",
+        "description": "This operation is the last step of an address completion process, allowing to retrieve numbers in a street Step 3: I get all the street segments (numbers) existing in the street.\nFiltering is allowed on all attributes. \nAttribute selection is possible for all attributes.\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "streetId",
+            "required": true,
+            "in": "query",
+            "description": "Unique identifier of the street",
+            
+              "type": "string"
+          },
+          {
+            "name": "fields",
+            "required": false,
+            "in": "query",
+            "description": "Attribute selection",
+            
+              "type": "string"
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Requested index for start of resources to be provided in response requested by client",
+            
+              "type": "integer",
+              "format": "int32"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Requested number of resources to be provided in response requested by client",
+            
+              "type": "integer",
+              "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+              "$ref": "#/definitions/StreetSegment"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "description": "Tota number of items matching criteria",
+              "type": "integer",
+              "format": "int32"
+              },
+              "X-Result-Count": {
+                "description": "Actual number of items returned in the response body",
+              "type": "integer",
+              "format": "int32"
+              }
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      }
+    },
+      "/hub": {
+      "post": {
+        "tags": [
+           "Hub"
+        ],        
+        "operationId": "hubCreate",
+        "summary": "Register a listener",
+        "description": "Sets the communication endpoint address the service instance must use to deliver information about its health state, execution state, failures and metrics\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "data",
+            "required": true,
+            "in": "body",
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Hub"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Hub"
+            }
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      }
+    },
+      "/hub/{hubId}": {
+      "delete": {
+        "tags": [
+           "Hub"
+        ],        
+        "operationId": "hubDelete",
+        "summary": "Unregister a listener",
+        "description": "Clears the communication endpoint address that was set by creating the Hub.\n\nSpecific business errors for current operation will be encapsulated in\n\nHTTP Response 422 Unprocessable entity\n",
+        "deprecated": false,
+        
+        "parameters": [
+          
+          {
+            "name": "hubId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Unique identifier of the hub"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+
+          },
+          "400": {
+            
+            "description": "Bad Request\n\nList of supported error codes:\n- 20: Invalid URL parameter value\n- 21: Missing body\n- 22: Invalid body\n- 23: Missing body field\n- 24: Invalid body field\n- 25: Missing header\n- 26: Invalid header value\n- 27: Missing query-string parameter\n- 28: Invalid query-string parameter value",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "404": {
+            
+            "description": "Not Found\n\nList of supported error codes:\n- 60: Resource not found",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "405": {
+            
+            "description": "Method Not Allowed\n\nList of supported error codes:\n- 61: Method not allowed",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "422": {
+            
+            "description": "Unprocessable entity\n\nFunctional error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          },
+          "500": {
+            
+            "description": "Internal Server Error\n\nList of supported error codes:\n- 1: Internal error",
+            "schema": {
+            
+              "$ref": "#/definitions/ErrorRepresentation"
+            }
+          }
+        }
+      }
+    }
+  },
+"definitions": {
+  
+
+    "ErrorRepresentation": {
+      "description": "Standard tmf error representation",
+
+      
+      "required": [
+          
+            "code",
+            "reason"
+      ],
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Application related code (as defined in the API or from a common list)",
+              "type": "integer",
+              "format": "int32"
+        },
+        "reason": {
+          "description": "Text that explains the reason for error. This can be shown to a client server.",
+              "type": "string"
+        },
+        "message": {
+          "description": "Text that provides more details and corrective actions related to the error. This can be shown to a client server.",
+              "type": "string"
+        },
+        "status": {
+          "description": "http error code extension like 400-2",
+              "type": "string"
+        },
+        "referenceError": {
+          "description": "url pointing to documentation describing the error",
+              "type": "string"
+        },
+        "@type": {
+          "description": "Class type of the REST resource",
+              "type": "string"
+        },
+        "@schemaLocation": {
+          "description": "Link to the schema describing the REST resource",
+              "type": "string"
+        }
+      }
+      
+    },
+
+    "GeographicPoint": {
+      "description": "A GeographicPoint defines a geographic point through coordinates.",
+
+      
+      "type": "object",
+      "properties": {
+        "x": {
+          "description": "x coordinate (usually latitude)",
+              "type": "string"
+        },
+        "y": {
+          "description": "y coordinate (usually longitude)",
+              "type": "string"
+        },
+        "z": {
+          "description": "z coordinate (usually elevation)",
+              "type": "string"
+        }
+      }
+      
+    },
+
+    "GeographicLocation": {
+      "description": "A GeographicLocation allows describing through coordinate(s) a point, a line or a space",
+
+      
+      "required": [
+          
+            "accuracy",
+            "spatialRef"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique Identifier of a GeoLocation",
+              "type": "string"
+        },
+        "href": {
+          "description": "href of the GeoLocation",
+              "type": "string"
+        },
+        "name": {
+          "description": "Name of a GeoLocation",
+              "type": "string"
+        },
+        "geometryType": {
+          "description": "Type allows describing Geolocation form: it could be a point, a line, a polygon, a cylinder, etc....",
+              "type": "string"
+        },
+        "accuracy": {
+          "description": "",
+              "type": "string"
+        },
+        "spatialRef": {
+          "description": "",
+              "type": "string"
+        },
+        "@type": {
+          "description": "Indicates the type of resource",
+              "type": "string"
+        },
+        "@schemaLocation": {
+          "description": "A link to the schema describing this REST Resource",
+              "type": "string"
+        },
+        "geometry": {
+          
+          "type": "array",
+          "items": {
+              "$ref": "#/definitions/GeographicPoint"
+          }
+        }
+      }
+      
+    },
+
+    "GeographicSubAddress": {
+      "description": "It is used for addressing within a property in an urban area (country properties are often defined differently). It may refer to a building, a building cluster, or a floor of a multistory building.",
+
+      
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique Identifier of the subAddress",
+              "type": "string"
+        },
+        "href": {
+          "description": "Href of the subAddress",
+              "type": "string"
+        },
+        "type": {
+          "description": "Type of subAddress : it can be a subunit or a private street",
+              "type": "string"
+        },
+        "name": {
+          "description": "Name of the subAddress to identify it with a meaningful identification",
+              "type": "string"
+        },
+        "subUnitType": {
+          "description": "The type of subunit\ne.g.BERTH, FLAT, PIER, SUITE, SHOP, TOWER, UNIT, WHARF.",
+              "type": "string"
+        },
+        "subUnitNumber": {
+          "description": "The discriminator used for the subunit\noften just a simple number e.g. FLAT 5, may also be a range",
+              "type": "string"
+        },
+        "levelType": {
+          "description": "Describes level types within a building",
+              "type": "string"
+        },
+        "levelNumber": {
+          "description": "Used where a level type may be repeated e.g. BASEMENT 1, BASEMENT 2",
+              "type": "string"
+        },
+        "buildingName": {
+          "description": "Allows for buildings that have well-known names",
+              "type": "string"
+        },
+        "privateStreetNumber": {
+          "description": "Private streets numbers internal to a private street",
+              "type": "string"
+        },
+        "privateStreetName": {
+          "description": "Private streets internal to a property (e.g. a university) may have internal names that are not recorded by the land title office",
+              "type": "string"
+        },
+        "@type": {
+          "description": "Type of the resource for this subAdress",
+              "type": "string"
+        },
+        "@schemaLocation": {
+          "description": "A link to the schema describing this REST Resource",
+              "type": "string"
+        }
+      }
+      
+    },
+
+    "GeographicAddress": {
+      "description": "A geographic address is a structured textual way of describing how to find a Property in an urban area (country properties are often defined differently)",
+
+      
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the address",
+              "type": "string"
+        },
+        "href": {
+          "description": "An URI used to access to the address resource",
+              "type": "string"
+        },
+        "streetNr": {
+          "description": "Number identifying a specific property on a public street. It may be combined with streetNrLast for ranged addresses",
+              "type": "string"
+        },
+        "streetNrSuffix": {
+          "description": "The first street number suffix",
+              "type": "string"
+        },
+        "streetNrLast": {
+          "description": "Last number in a range of street numbers allocated to a property",
+              "type": "string"
+        },
+        "streetNrLastSuffix": {
+          "description": "Last street number suffix for a ranged address",
+              "type": "string"
+        },
+        "streetName": {
+          "description": "Name of the street or other street type",
+              "type": "string"
+        },
+        "streetType": {
+          "description": "Alley, avenue, boulevard, brae, crescent, drive, highway, lane, terrace, parade, place, tarn, way, wharf",
+              "type": "string"
+        },
+        "streetSuffix": {
+          "description": "A modifier denoting a relative direction",
+              "type": "string"
+        },
+        "postcode": {
+          "description": "Descriptor for a postal delivery area, used to speed and simplify the delivery of mail (also known as zipcode)",
+              "type": "string"
+        },
+        "locality": {
+          "description": "\"An area of defined or undefined boundaries within a local authority or other legislatively defined area, usually rural or semi-rural in nature.\" [ANZLIC-STREET], or a suburb \"a bounded locality within a city, town or shire principally of urban character \" [ANZLICSTREET].",
+              "type": "string"
+        },
+        "city": {
+          "description": "City that the address is in",
+              "type": "string"
+        },
+        "stateOrProvince": {
+          "description": "The State or Province that the address is in",
+              "type": "string"
+        },
+        "country": {
+          "description": "Country that the address is in",
+              "type": "string"
+        },
+        "@type": {
+          "description": "Indicates the type of the resource. Here can be 'UrbanPropertyAddress', ‘FormattedAddress’, ‘JapanesePropertyAddress’ , ‘AustralianPropertyAddress’, etc…",
+              "type": "string"
+        },
+        "@schemaLocation": {
+          "description": "A Link to the schema describing this REST Resource. The resource described 'UrbanPropertyAddress' but a schema could be used for other property address description.",
+              "type": "string"
+        },
+        "geographicLocationRefOrValue": {
+          
+              "$ref": "#/definitions/GeographicLocation"
+        },
+        "geographicSubAddress": {
+          
+          "type": "array",
+          "items": {
+              "$ref": "#/definitions/GeographicSubAddress"
+          }
+        }
+      }
+      
+    },
+
+    "GeographicAddressValidation": {
+      "description": "Resource used to support a request for a validation address : check if a geographic address described by values attributes exists)\nIf exist, id and href are provided\nif not, alternate address(es) could be provided",
+
+      
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the Address Validation",
+              "type": "string"
+        },
+        "href": {
+          "description": "An URI used to access to the address validation resource",
+              "type": "string"
+        },
+        "status": {
+          "description": "Status of the address validation (inProgress, terminatedWithErrror, done).",
+              "type": "string"
+        },
+        "validationDate": {
+          "description": "Date when the address validation is performed",
+              "type": "string",
+              "format": "date-time"
+        },
+        "validationResult": {
+          "description": "Result of the address validation (success, partial, fail)",
+              "type": "string"
+        },
+        "provideaAlternative": {
+          "description": "Indicator provided by the requester to specify if alternate addresses must be provided in case of partial or fail result",
+              "type": "boolean"
+        },
+        "@type": {
+          "description": "Indicates the type of the resource.",
+              "type": "string"
+        },
+        "@schemaLocation": {
+          "description": "Link to schema describing this REST resource.",
+              "type": "string"
+        },
+        "validAddress": {
+          
+              "$ref": "#/definitions/GeographicAddressResponseValidation"
+        },
+        "alternateGeographicAddress": {
+          
+          "type": "array",
+          "items": {
+              "$ref": "#/definitions/GeographicAddressResponseValidation"
+          }
+        }
+      }
+      
+    },
+
+    "LocationCharacteristic": {
+      "description": "Name/value pairs, used to extra characterized the Area",
+
+      
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name of the characteristic",
+              "type": "string"
+        },
+        "value": {
+          "description": "Value of the characteristic",
+              "type": "string"
+        }
+      }
+      
+    },
+
+    "Area": {
+      "description": "Area corresponds to a geographic area as a city, a locality, a district, etc",
+
+      
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of an Area",
+              "type": "string"
+        },
+        "name": {
+          "description": "The defined name of the municipality",
+              "type": "string"
+        },
+        "type": {
+          "description": "SUBURB, LOCALITY, CITY, TOWN, BOROUGH, ....",
+              "type": "string"
+        },
+        "characteristic": {
+          
+          "type": "array",
+          "items": {
+              "$ref": "#/definitions/LocationCharacteristic"
+          }
+        }
+      }
+      
+    },
+
+    "Street": {
+      "description": "A street is a road in a city or locality that has buildings that are usually close together along one or both sides",
+
+      
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the Street",
+              "type": "string"
+        },
+        "name": {
+          "description": "The defined name of the street",
+              "type": "string"
+        },
+        "type": {
+          "description": "Alley, street, impasse, avenue, etc..",
+              "type": "string"
+        },
+        "address": {
+          
+          "type": "array",
+          "items": {
+              "$ref": "#/definitions/GeographicAddressRef"
+          }
+        },
+        "characteristic": {
+          
+          "type": "array",
+          "items": {
+              "$ref": "#/definitions/LocationCharacteristic"
+          }
+        }
+      }
+      
+    },
+
+    "GeographicAddressRef": {
+      "description": "Reference to a geographic address with id & href",
+
+      
+      "required": [
+          
+            "id"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "unique identifier of an address",
+              "type": "string"
+        },
+        "href": {
+          "description": "URI to point to the address",
+              "type": "string"
+        }
+      }
+      
+    },
+
+    "StreetSegment": {
+      "description": "StreetSegment corresponds to a part of a given street referenced by a number (22) or a set of number (22-24). Sometimes a suffix is added",
+
+      
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the Street Segment",
+              "type": "string"
+        },
+        "number": {
+          "description": "Number identifying a specific property on a public street. It may be combined with streetNrLast for ranged addresses",
+              "type": "string"
+        },
+        "numberSuffix": {
+          "description": "The first street number suffix",
+              "type": "string"
+        },
+        "numberLast": {
+          "description": "The last number in a range of street numbers allocated to a property",
+              "type": "string"
+        },
+        "numberLastSuffix": {
+          "description": "The last street number suffix for a ranged address",
+              "type": "string"
+        },
+        "geographicAddress": {
+          
+          "type": "array",
+          "items": {
+              "$ref": "#/definitions/GeographicAddressRef"
+          }
+        }
+      }
+      
+    },
+
+    "GeographicAddressValidationRequest": {
+      "description": "Structure used to describe an address validation request",
+
+      
+      "type": "object",
+      "properties": {
+        "provideaAlternative": {
+          "description": "Indicator provided by the requester to specify if alternate addresses must be provided in case of partial or fail result",
+              "type": "boolean"
+        },
+        "validAddress": {
+          
+              "$ref": "#/definitions/GeographicAddressRequestValidation"
+        }
+      }
+      
+    },
+
+    "GeographicAddressRequestValidation": {
+      "description": "",
+
+      
+      "type": "object",
+      "properties": {
+        "streetNr": {
+          "description": "Number identifying a specific property on a public street. It may be combined with streetNrLast for ranged addresses",
+              "type": "string"
+        },
+        "streetNrSuffix": {
+          "description": "The first street number suffix",
+              "type": "string"
+        },
+        "streetNrLast": {
+          "description": "Last number in a range of street numbers allocated to a property",
+              "type": "string"
+        },
+        "streetNrLastSuffix": {
+          "description": "Last street number suffix for a ranged address",
+              "type": "string"
+        },
+        "streetName": {
+          "description": "Name of the street or other street type",
+              "type": "string"
+        },
+        "streetType": {
+          "description": "Alley, avenue, boulevard, brae, crescent, drive, highway, lane, terrace, parade, place, tarn, way, wharf",
+              "type": "string"
+        },
+        "streetSuffix": {
+          "description": "A modifier denoting a relative direction",
+              "type": "string"
+        },
+        "postcode": {
+          "description": "Descriptor for a postal delivery area, used to speed and simplify the delivery of mail (also known as zipcode)",
+              "type": "string"
+        },
+        "locality": {
+          "description": "\"An area of defined or undefined boundaries within a local authority or other legislatively defined area, usually rural or semi-rural in nature.\" [ANZLIC-STREET], or a suburb \"a bounded locality within a city, town or shire principally of urban character \" [ANZLICSTREET].",
+              "type": "string"
+        },
+        "city": {
+          "description": "City that the address is in",
+              "type": "string"
+        },
+        "stateOrProvince": {
+          "description": "The State or Province that the address is in",
+              "type": "string"
+        },
+        "country": {
+          "description": "Country that the address is in",
+              "type": "string"
+        },
+        "geoLocationRefOrValue": {
+          
+              "$ref": "#/definitions/GeographicLocation"
+        }
+      }
+      
+    },
+
+    "GeographicAddressResponseValidation": {
+      "description": "",
+
+      
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the address",
+              "type": "string"
+        },
+        "href": {
+          "description": "An URI used to access to the address resource",
+              "type": "string"
+        },
+        "streetNr": {
+          "description": "Number identifying a specific property on a public street. It may be combined with streetNrLast for ranged addresses",
+              "type": "string"
+        },
+        "streetNrSuffix": {
+          "description": "The first street number suffix",
+              "type": "string"
+        },
+        "streetNrLast": {
+          "description": "Last number in a range of street numbers allocated to a property",
+              "type": "string"
+        },
+        "streetNrLastSuffix": {
+          "description": "Last street number suffix for a ranged address",
+              "type": "string"
+        },
+        "streetName": {
+          "description": "Name of the street or other street type",
+              "type": "string"
+        },
+        "streetType": {
+          "description": "Alley, avenue, boulevard, brae, crescent, drive, highway, lane, terrace, parade, place, tarn, way, wharf",
+              "type": "string"
+        },
+        "streetSuffix": {
+          "description": "A modifier denoting a relative direction",
+              "type": "string"
+        },
+        "postcode": {
+          "description": "Descriptor for a postal delivery area, used to speed and simplify the delivery of mail (also known as zipcode)",
+              "type": "string"
+        },
+        "locality": {
+          "description": "\"An area of defined or undefined boundaries within a local authority or other legislatively defined area, usually rural or semi-rural in nature.\" [ANZLIC-STREET], or a suburb \"a bounded locality within a city, town or shire principally of urban character \" [ANZLICSTREET].",
+              "type": "string"
+        },
+        "city": {
+          "description": "City that the address is in",
+              "type": "string"
+        },
+        "stateOrProvince": {
+          "description": "The State or Province that the address is in",
+              "type": "string"
+        },
+        "country": {
+          "description": "Country that the address is in",
+              "type": "string"
+        },
+        "@type": {
+          "description": "Indicates the type of the resource. Here can be 'UrbanPropertyAddress', ‘FormattedAddress’, ‘JapanesePropertyAddress’ , ‘AustralianPropertyAddress’, etc…",
+              "type": "string"
+        },
+        "@schemaLocation": {
+          "description": "A Link to the schema describing this REST Resource. The resource described 'UrbanPropertyAddress' but a schema could be used for other property address description.",
+              "type": "string"
+        },
+        "geographicLocationRefOrValue": {
+          
+              "$ref": "#/definitions/GeographicLocation"
+        }
+      }
+      
+    },
+
+    "Hub": {
+      "description": "Communication endpoint address the service instance must use to deliver information about its health state, execution state, failures and metrics",
+
+      
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the hub",
+              "type": "string"
+        },
+        "callback": {
+          "description": "The callback being registered",
+              "type": "string"
+        },
+        "query": {
+          "description": "Additional data to be passed",
+              "type": "string"
+        }
+      }
+      
+    },
+
+    "HubInput": {
+      "description": "Communication endpoint address the service instance must use to deliver information about its health state, execution state, failures and metrics",
+
+      
+      "type": "object",
+      "properties": {
+        "callback": {
+          "description": "The callback being registered",
+              "type": "string"
+        },
+        "query": {
+          "description": "Additional data to be passed",
+              "type": "string"
+        }
+      }
+      
+    }
+  }
+}
+	
