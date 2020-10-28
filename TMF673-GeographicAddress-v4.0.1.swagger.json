@@ -1225,80 +1225,31 @@
     "GeographicLocation": {
       "type": "object",
       "description": "A GeographicLocation is a pure-virtual super-class to the GeoJSON-aligned geometries of Point (addresses and locations), MultiPoint, LineString (streets, highways and boundaries), MultiLineString and Polygon (countries, provinces, tracts of land). Use the @type attribute to specify which of these is being specified by the geometry attribute.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier of the geographic location"
+      "allOf": [
+        {
+          "$ref": "#/definitions/GeographicLocationRefOrValue"
         },
-        "href": {
-          "type": "string",
-          "description": "An URI used to access to the geographic location resource"
-        },
-        "@type": {
-          "type": "string",
-          "enum": [
-            "GeoJsonPoint",
-            "GeoJsonMultiPoint",
-            "GeoJsonLineString",
-            "GeoJsonMultiLineString",
-            "GeoJsonPolygon"
-          ],
-          "description": "The name of the GeoJSON structure used in the geometry attribute"
-        },
-        "bbox": {
-          "type": "array",
-          "description": "A bounding box array that contains the geometry. The axes order follows the axes order of the geometry",
-          "items": {
-            "type": "number"
+        {
+          "properties": {
+            "geoJson": {
+              "description": "GeoJson object according to https://tools.ietf.org/html/rfc7946",
+              "$ref": "#/definitions/GeoJsonType"
+            }
           }
         }
-      },
-      "required": [
-        "@type"
       ]
     },
     "GeographicLocationRef": {
       "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "unique identifier"
-        },
-        "href": {
-          "type": "string",
-          "description": "Hyperlink reference"
-        },
-        "name": {
-          "type": "string",
-          "description": "Name of the related entity."
-        },
-        "@baseType": {
-          "example": "ResourceSpecification",
-          "type": "string",
-          "description": "When sub-classing, this defines the super-class"
-        },
-        "@schemaLocation": {
-          "example": "https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json",
-          "type": "string",
-          "format": "uri",
-          "description": "A URI to a JSON-Schema file that defines additional attributes and relationships"
-        },
-        "@type": {
-          "example": "LogicalResourceSpecification",
-          "type": "string",
-          "description": "When sub-classing, this defines the sub-class Extensible name"
-        },
-        "@referredType": {
-          "type": "string",
-          "description": "The actual type of the target instance when needed for disambiguation."
+      "allOf": [
+        {
+          "$ref": "#/definitions/GeographicLocationRefOrValue"
         }
-      },
-      "required": [
-        "id"
       ]
     },
     "GeographicLocationRefOrValue": {
       "type": "object",
+      "discriminator": "@type",
       "description": "A GeographicLocation is a pure-virtual super-class to the GeoJSON-aligned geometries of Point (addresses and locations), MultiPoint, LineString (streets, highways and boundaries), MultiLineString and Polygon (countries, provinces, tracts of land). Use the @type attribute to specify which of these is being specified by the geometry attribute.",
       "required": [
         "@type"
@@ -1321,13 +1272,6 @@
           "type": "string",
           "description": "When sub-classing, this defines the super-class"
         },
-        "bbox": {
-          "type": "array",
-          "description": "A bounding box array that contains the geometry. The axes order follows the axes order of the geometry",
-          "items": {
-            "type": "number"
-          }
-        },
         "@schemaLocation": {
           "example": "https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json",
           "type": "string",
@@ -1336,13 +1280,6 @@
         },
         "@type": {
           "type": "string",
-          "enum": [
-            "GeoJsonPoint",
-            "GeoJsonMultiPoint",
-            "GeoJsonLineString",
-            "GeoJsonMultiLineString",
-            "GeoJsonPolygon"
-          ],
           "description": "The name of the GeoJSON structure used in the geometry attribute"
         },
         "@referredType": {
@@ -1552,86 +1489,125 @@
         }
       }
     },
-    "GeoJsonLineString": {
+    "GeoJsonType": {
       "type": "object",
-      "description": "Container for GeoJson LineString: A collection of Points forming a connected line",
+      "description": "GeoJson Base Object as defined in https://tools.ietf.org/html/rfc7946",
+      "discriminator": "type",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Type of the GeoJson object"
+        },
+        "bbox": {
+          "type": "array",
+          "description": "A bounding box array that contains the geometry. The axes order follows the axes order of the geometry",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "GeoJsonPosition": {
+      "description": "A GeoJson position",
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minItems": 2,
+        "maxItems": 2
+      }
+    },
+    "GeoJsonPositionArray": {
+      "description": "A GeoJson position array",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/GeoJsonPosition"
+      }
+    },
+    "GeoJsonGeometryType": {
+      "description": "Base for all geometry types: Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection",
+      "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/GeographicLocation"
+          "$ref": "#/definitions/GeoJsonType"
+        }
+      ]
+    },
+    "Feature": {
+      "description": "A GeoJson Feature",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/GeoJsonType"
         },
         {
-          "type": "object",
           "properties": {
-            "geoJson": {
-              "$ref": "#/definitions/LineString"
+            "geometry": {
+              "$ref": "#/definitions/GeoJsonGeometryType",
+              "description": "A GeoJson geometry"
+            },
+            "properties": {
+              "type": "object",
+              "description": "properties of the feature"
             }
           }
         }
       ]
     },
-    "GeoJsonMultiLineString": {
+    "FeatureCollection": {
       "type": "object",
-      "description": "A container for GeoJSON MultiLineString: A collection of distinct LineStrings",
+      "description": "A GeoJson FeatureCollection",
       "allOf": [
         {
-          "$ref": "#/definitions/GeographicLocation"
+          "$ref": "#/definitions/GeoJsonType"
         },
         {
-          "type": "object",
           "properties": {
-            "geoJson": {
-              "$ref": "#/definitions/MultiLineString"
+            "features": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Feature"
+              }
             }
           }
         }
       ]
     },
-    "GeoJsonMultiPoint": {
+    "Point": {
       "type": "object",
-      "description": "Container for GeoJSON MultiPoint: A collection of Points",
+      "description": "A GeoJson Point",
       "allOf": [
         {
-          "$ref": "#/definitions/GeographicLocation"
+          "$ref": "#/definitions/GeoJsonGeometryType"
         },
         {
-          "type": "object",
           "properties": {
-            "geoJson": {
-              "$ref": "#/definitions/MultiPoint"
+            "coordinates": {
+              "$ref": "#/definitions/GeoJsonPosition"
             }
-          }
+          },
+          "required": [
+            "coordinates"
+          ]
         }
       ]
     },
-    "GeoJsonPoint": {
+    "MultiPoint": {
       "type": "object",
-      "description": "Container for a GeoJSON Point: A single position",
+      "description": "A GeoJson MultiPoint",
       "allOf": [
         {
-          "$ref": "#/definitions/GeographicLocation"
+          "$ref": "#/definitions/GeoJsonGeometryType"
         },
         {
-          "type": "object",
           "properties": {
-            "geoJson": {
-              "$ref": "#/definitions/Point"
-            }
-          }
-        }
-      ]
-    },
-    "GeoJsonPolygon": {
-      "type": "object",
-      "description": "Container for GeoJSON Polygon: An array of linear rings",
-      "allOf": [
-        {
-          "$ref": "#/definitions/GeographicLocation"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "geoJson": {
-              "$ref": "#/definitions/Polygon"
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GeoJsonPosition"
+              }
             }
           }
         }
@@ -1639,193 +1615,101 @@
     },
     "LineString": {
       "type": "object",
-      "description": "GeoJSON: A collection of Points forming a connected line",
-      "required": [
-        "coordinates"
-      ],
-      "properties": {
-        "coordinates": {
-          "$ref": "#/definitions/lineString"
+      "description": "A GeoJson LineString",
+      "allOf": [
+        {
+          "$ref": "#/definitions/GeoJsonGeometryType"
         },
-        "@baseType": {
-          "type": "string",
-          "description": "When sub-classing, this defines the super-class"
-        },
-        "@schemaLocation": {
-          "type": "string",
-          "format": "uri",
-          "description": "A URI to a JSON-Schema file that defines additional attributes and relationships"
-        },
-        "@type": {
-          "type": "string",
-          "description": "When sub-classing, this defines the sub-class entity name"
+        {
+          "properties": {
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GeoJsonPosition"
+              }
+            }
+          }
         }
-      }
+      ]
     },
     "MultiLineString": {
       "type": "object",
-      "description": "A collection of distinct LineStrings",
-      "required": [
-        "coordinates",
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "type": "string"
+      "description": "A GeoJson MultiLineString",
+      "allOf": [
+        {
+          "$ref": "#/definitions/GeoJsonGeometryType"
         },
-        "coordinates": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/lineString"
-          },
-          "minItems": 1
-        },
-        "@baseType": {
-          "type": "string",
-          "description": "When sub-classing, this defines the super-class"
-        },
-        "@schemaLocation": {
-          "type": "string",
-          "format": "uri",
-          "description": "A URI to a JSON-Schema file that defines additional attributes and relationships"
-        },
-        "@type": {
-          "type": "string",
-          "description": "When sub-classing, this defines the sub-class entity name"
+        {
+          "properties": {
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GeoJsonPositionArray"
+              }
+            }
+          }
         }
-      }
-    },
-    "MultiPoint": {
-      "type": "object",
-      "description": "A collection of Points",
-      "required": [
-        "coordinates",
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "coordinates": {
-          "$ref": "#/definitions/positionArray"
-        },
-        "@baseType": {
-          "type": "string",
-          "description": "When sub-classing, this defines the super-class"
-        },
-        "@schemaLocation": {
-          "type": "string",
-          "format": "uri",
-          "description": "A URI to a JSON-Schema file that defines additional attributes and relationships"
-        },
-        "@type": {
-          "type": "string",
-          "description": "When sub-classing, this defines the sub-class entity name"
-        }
-      }
-    },
-    "Point": {
-      "type": "object",
-      "description": "GeoJSON: A single position",
-      "required": [
-        "coordinates",
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "coordinates": {
-          "$ref": "#/definitions/position"
-        },
-        "@baseType": {
-          "type": "string",
-          "description": "When sub-classing, this defines the super-class"
-        },
-        "@schemaLocation": {
-          "type": "string",
-          "format": "uri",
-          "description": "A URI to a JSON-Schema file that defines additional attributes and relationships"
-        },
-        "@type": {
-          "type": "string",
-          "description": "When sub-classing, this defines the sub-class entity name"
-        }
-      }
+      ]
     },
     "Polygon": {
       "type": "object",
-      "description": "An array of linear rings",
-      "required": [
-        "coordinates",
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "coordinates": {
-          "$ref": "#/definitions/polygon"
-        },
-        "@baseType": {
-          "type": "string",
-          "description": "When sub-classing, this defines the super-class"
-        },
-        "@schemaLocation": {
-          "type": "string",
-          "format": "uri",
-          "description": "A URI to a JSON-Schema file that defines additional attributes and relationships"
-        },
-        "@type": {
-          "type": "string",
-          "description": "When sub-classing, this defines the sub-class entity name"
-        }
-      }
-    },
-    "position": {
-      "description": "GeoJSON: A single position",
-      "type": "array",
-      "minItems": 2,
-      "items": {
-        "type": "number"
-      },
-      "maxItems": 2
-    },
-    "positionArray": {
-      "description": "GeoJSON: An array of positions",
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/position"
-      }
-    },
-    "lineString": {
-      "description": "GeoJSON: An array of two or more positions",
+      "description": "A GeoJson Polygon",
       "allOf": [
         {
-          "$ref": "#/definitions/positionArray"
+          "$ref": "#/definitions/GeoJsonGeometryType"
         },
         {
-          "minItems": 2
+          "properties": {
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GeoJsonPositionArray"
+              }
+            }
+          }
         }
       ]
     },
-    "linearRing": {
-      "description": "GeoJSON: An array of four positions where the first equals the last",
+    "MultiPolygon": {
+      "type": "object",
+      "description": "A GeoJson ",
       "allOf": [
         {
-          "$ref": "#/definitions/positionArray"
+          "$ref": "#/definitions/GeoJsonGeometryType"
         },
         {
-          "minItems": 4
+          "properties": {
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/GeoJsonPositionArray"
+                }
+              }
+            }
+          }
         }
       ]
     },
-    "polygon": {
-      "description": "GeoJSON: An array of linear rings",
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/linearRing"
-      }
+    "GeometryCollection": {
+      "type": "object",
+      "description": "A GeoJson ",
+      "allOf": [
+        {
+          "$ref": "#/definitions/GeoJsonGeometryType"
+        },
+        {
+          "properties": {
+            "geometries": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GeoJsonGeometryType"
+              }
+            }
+          }
+        }
+      ]
     },
     "Error": {
       "description": "Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)",
