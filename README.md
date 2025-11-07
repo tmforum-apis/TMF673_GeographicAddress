@@ -1,8 +1,8 @@
-# TMF673_GeographicAddress
-TM Forum Open APIs (Apache 2.0) Geographic Address API
+# TMF673 GeographicAddress
 
-Provides a standardized client interface to an Address management system. It allows looking for worldwide addresses. It can also be used to validate geographic address data, to be sure that it corresponds to a real geographic address. Finally, it can be used to look for a geographic address by: searching an area as a start (city, town ...), then zooming on the streets of this area, and finally listing all the street segments (numbers) in a street.
+TM Forum Open API (Apache 2.0) GeographicAddress API.
 
-To access this API; (the Specification, Postman Collection, Swagger file, Swagger-UI, Reference Implementation, Conformance Profile, and CTK) go to the Open API table at:
+TM Forum Open API for GeographicAddress.
 
-https://projects.tmforum.org/wiki/display/API/Open+API+Table
+The resources in this repository are a mirror of the official versions, published here for your convenience.
+The authoritative source of information for this API is: https://www.tmforum.org/oda/open-apis/directory/
